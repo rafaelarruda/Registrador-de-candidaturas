@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#19231f" />
+    <title>Rastro | Candidaturas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="/static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Rastro, início">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>rastro<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-meta"><span class="live-dot"></span> PAINEL PESSOAL</div>
+      <a class="docs-link" href="/docs" target="_blank" rel="noreferrer">API <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="shell">
+      <section class="page-heading">
+        <div>
+          <p class="eyebrow">SEU PRÓXIMO PASSO COMEÇA AQUI</p>
+          <h1>Candidaturas<span class="heading-mark">.</span></h1>
+        </div>
+        <button class="button button-primary" id="new-application" type="button">
+          <span class="button-plus" aria-hidden="true">+</span> Nova candidatura
+        </button>
+      </section>
+
+      <section class="metrics" aria-label="Resumo do funil">
+        <div class="metric metric-total">
+          <span class="metric-label">NO RADAR</span>
+          <strong id="metric-total">—</strong>
+          <span class="metric-note">candidaturas</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label"><span class="status-dot dot-sent"></span> ENVIADAS</span>
+          <strong id="metric-enviado">—</strong>
+          <span class="metric-note">aguardando retorno</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label"><span class="status-dot dot-interview"></span> ENTREVISTAS</span>
+          <strong id="metric-entrevista">—</strong>
+          <span class="metric-note">conversas em andamento</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label"><span class="status-dot dot-offer"></span> OFERTAS</span>
+          <strong id="metric-oferta">—</strong>
+          <span class="metric-note">novos começos</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label"><span class="status-dot dot-declined"></span> ENCERRADAS</span>
+          <strong id="metric-recusado">—</strong>
+          <span class="metric-note">ciclo concluído</span>
+        </div>
+      </section>
+
+      <section class="list-section" aria-labelledby="list-title">
+        <div class="list-heading">
+          <div>
+            <p class="eyebrow">ACOMPANHAMENTO</p>
+            <h2 id="list-title">Todas as vagas</h2>
+          </div>
+          <span class="result-count" id="result-count"></span>
+        </div>
+
+        <div class="toolbar">
+          <label class="search-field">
+            <span class="search-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Buscar empresa</span>
+            <input id="company-search" type="search" placeholder="Buscar empresa" autocomplete="off" />
+          </label>
+          <label class="filter-field">
+            <span class="visually-hidden">Filtrar por status</span>
+            <select id="status-filter">
+              <option value="">Todos os status</option>
+              <option value="enviado">Enviada</option>
+              <option value="entrevista">Entrevista</option>
+              <option value="oferta">Oferta</option>
+              <option value="recusado">Encerrada</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="notice" id="notice" role="status" aria-live="polite" hidden></p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">EMPRESA / CARGO</th>
+                <th scope="col">DATA</th>
+                <th scope="col">STATUS</th>
+                <th scope="col"><span class="visually-hidden">Ações</span></th>
+              </tr>
+            </thead>
+            <tbody id="applications-body"></tbody>
+          </table>
+          <div class="empty-state" id="empty-state" hidden>
+            <span class="empty-symbol" aria-hidden="true">↗</span>
+            <h3 id="empty-title">Seu próximo capítulo começa com uma candidatura.</h3>
+            <p id="empty-copy">Adicione uma vaga para acompanhar cada etapa por aqui.</p>
+            <button class="button button-secondary" id="empty-create" type="button">Adicionar vaga</button>
+          </div>
+        </div>
+
+        <footer class="table-footer">
+          <span id="page-status"></span>
+          <div class="pagination">
+            <button class="page-button" id="previous-page" type="button" aria-label="Página anterior">←</button>
+            <span id="page-number">1</span>
+            <button class="page-button" id="next-page" type="button" aria-label="Próxima página">→</button>
+          </div>
+        </footer>
+      </section>
+      <p class="footer-note">FEITO PARA MANTER O MOVIMENTO.</p>
+    </main>
+
+    <dialog class="application-dialog" id="application-dialog" aria-labelledby="dialog-title">
+      <form id="application-form">
+        <div class="dialog-heading">
+          <div>
+            <p class="eyebrow">REGISTRO DE VAGA</p>
+            <h2 id="dialog-title">Nova candidatura</h2>
+          </div>
+          <button class="close-button" id="close-dialog" type="button" aria-label="Fechar">×</button>
+        </div>
+        <input id="application-id" type="hidden" />
+        <div class="form-grid">
+          <label class="form-field">
+            <span>Empresa <b>*</b></span>
+            <input id="company-input" name="empresa" maxlength="150" required />
+          </label>
+          <label class="form-field">
+            <span>Cargo <b>*</b></span>
+            <input id="role-input" name="cargo" maxlength="150" required />
+          </label>
+          <label class="form-field">
+            <span>Link da vaga</span>
+            <input id="link-input" name="link" type="url" maxlength="2048" placeholder="https://" />
+          </label>
+          <label class="form-field">
+            <span>Salário</span>
+            <input id="salary-input" name="salario" maxlength="120" placeholder="Ex.: R$ 8.000–10.000/mês ou a combinar" />
+          </label>
+          <label class="form-field">
+            <span>Etapa</span>
+            <select id="application-status" name="status">
+              <option value="enviado">Enviada</option>
+              <option value="entrevista">Entrevista</option>
+              <option value="oferta">Oferta</option>
+              <option value="recusado">Encerrada</option>
+            </select>
+          </label>
+          <label class="form-field">
+            <span>Data da candidatura</span>
+            <input id="application-date" name="data_candidatura" type="date" />
+          </label>
+          <label class="form-field form-field-wide">
+            <span>Requisitos</span>
+            <textarea id="requirements-input" name="requisitos" rows="3" maxlength="5000" placeholder="Formação, experiência, habilidades e outros requisitos da vaga..."></textarea>
+          </label>
+          <label class="form-field form-field-wide">
+            <span>Anotações</span>
+            <textarea id="notes-input" name="anotacoes" rows="3" placeholder="Pessoas, próximos passos, detalhes importantes..."></textarea>
+          </label>
+        </div>
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+        <div class="dialog-actions">
+          <button class="button button-quiet" id="cancel-dialog" type="button">Cancelar</button>
+          <button class="button button-primary" id="save-application" type="submit">Salvar candidatura</button>
+        </div>
+      </form>
+    </dialog>
+  </body>
+</html>
